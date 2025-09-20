@@ -1,4 +1,4 @@
-package ru.nvgsoft.news.ui.theme
+package ru.nvgsoft.news.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
