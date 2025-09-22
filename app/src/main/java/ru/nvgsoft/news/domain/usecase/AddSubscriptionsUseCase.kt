@@ -1,0 +1,13 @@
+package ru.nvgsoft.news.domain.usecase
+
+import ru.nvgsoft.news.domain.repository.NewsRepository
+import javax.inject.Inject
+
+class AddSubscriptionsUseCase @Inject constructor(
+    private val repository: NewsRepository
+) {
+    suspend operator fun invoke(topic: String){
+        repository.addSubscriptions(topic)
+        repository.updateArticlesForTopic(topic)
+    }
+}
