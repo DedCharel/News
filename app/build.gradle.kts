@@ -80,4 +80,8 @@ dependencies {
 
     //coil
     implementation(libs.coil.compose)
+
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.kotlinx.serialization)
 }
