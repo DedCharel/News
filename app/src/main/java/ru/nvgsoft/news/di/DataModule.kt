@@ -1,6 +1,7 @@
 package ru.nvgsoft.news.di
 
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,11 +16,19 @@ import retrofit2.create
 import ru.nvgsoft.news.data.local.NewsDao
 import ru.nvgsoft.news.data.local.NewsDatabase
 import ru.nvgsoft.news.data.remote.NewsApiService
+import ru.nvgsoft.news.data.repository.NewsRepositoryImpl
+import ru.nvgsoft.news.domain.repository.NewsRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataModule {
+
+    @Binds
+    @Singleton
+    fun bindNewsRepository(
+        impl: NewsRepositoryImpl
+    ): NewsRepository
 
     companion object {
 
