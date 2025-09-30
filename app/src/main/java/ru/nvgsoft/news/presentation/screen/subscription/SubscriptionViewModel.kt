@@ -22,9 +22,10 @@ import ru.nvgsoft.news.domain.usecase.GetAllSubscriptionsUseCase
 import ru.nvgsoft.news.domain.usecase.GetArticlesByTopicsUseCase
 import ru.nvgsoft.news.domain.usecase.RemoveSubscriptionsUseCase
 import ru.nvgsoft.news.domain.usecase.UpdateSubscribedArticlesUseCase
+import javax.inject.Inject
 
 @HiltViewModel
-class SubscriptionViewModel(
+class SubscriptionViewModel @Inject constructor(
     private val addSubscriptionsUseCase: AddSubscriptionsUseCase,
     private val clearAllArticlesUseCase: ClearAllArticlesUseCase,
     private val getAllSubscriptionsUseCase: GetAllSubscriptionsUseCase,
