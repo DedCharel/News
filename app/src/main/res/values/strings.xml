@@ -10,4 +10,9 @@
     <string name="add_subscriptions_button">Add Subscriptions</string>
     <string name="subscriptions_lable">Subscriptions (%1$d)</string>
     <string name="no_subscriptions">No subscriptions</string>
+    <string name="image_for_article">Image for article %1$s</string>
+    <string name="read_article">Read article</string>
+    <string name="read">Read</string>
+    <string name="share_article">Share article</string>
+    <string name="share">Share</string>
 </resources>
