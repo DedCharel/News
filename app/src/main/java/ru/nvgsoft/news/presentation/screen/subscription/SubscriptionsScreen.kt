@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -33,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -56,10 +61,9 @@ fun SubscriptionsScreen(
     onNavigateToSettings: () -> Unit,
     viewModel: SubscriptionViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.collectAsState()
-    val currentState = state.value
+
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         topBar = {
             SubscriptionsTopBar(
                 modifier = modifier,
@@ -69,30 +73,78 @@ fun SubscriptionsScreen(
                 onClearArticlesClick = {
                     viewModel.processCommand(SubscriptionCommand.ClearArticles)
                 },
-                onSettingsClick = { onNavigateToSettings() }
+                onSettingsClick = onNavigateToSettings
             )
         }
     ) { innerPadding ->
-        Subscriptions(
-            modifier = modifier
-                .padding(innerPadding)
+        val state by viewModel.state.collectAsState()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            subscriptions = currentState.subscriptions,
-            query = currentState.query,
-            isSubscribeButtonEnabled = currentState.query.isNotBlank(),
-            onQueryChange = {
-                viewModel.processCommand(SubscriptionCommand.InputTopic(it))
-            },
-            onTopicClick = {
-                viewModel.processCommand(SubscriptionCommand.ToggleTopicSelection(it))
-            },
-            onDeleteSubscription = {
-                viewModel.processCommand(SubscriptionCommand.RemoveSubscription(it))
-            },
-            onSubscribeButtonClick = {
-                viewModel.processCommand(SubscriptionCommand.ClickSubscribe)
+            contentPadding = innerPadding,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+
+        ) {
+            item {
+
+                Subscriptions(
+                    modifier = modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+                    subscriptions = state.subscriptions,
+                    query = state.query,
+                    isSubscribeButtonEnabled = state.subscribeButtonEnabled,
+                    onQueryChange = {
+                        viewModel.processCommand(SubscriptionCommand.InputTopic(it))
+                    },
+                    onTopicClick = {
+                        viewModel.processCommand(SubscriptionCommand.ToggleTopicSelection(it))
+                    },
+                    onDeleteSubscription = {
+                        viewModel.processCommand(SubscriptionCommand.RemoveSubscription(it))
+                    },
+                    onSubscribeButtonClick = {
+                        viewModel.processCommand(SubscriptionCommand.ClickSubscribe)
+                    }
+                )
             }
-        )
+            if (state.articles.isNotEmpty()){
+                item {
+                    HorizontalDivider()
+                }
+                item {
+                    Text(
+                        text = "Articles (${state.articles.size})",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                item {
+                    HorizontalDivider()
+                }
+
+               items(
+                   items = state.articles,
+                   key = {it.url}
+               ){
+                    ArticleCard(
+                        article = it
+                    )
+               }
+            } else if (state.subscriptions.isNotEmpty()){
+                item {
+                    HorizontalDivider()
+                }
+                item {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.no_articles_for_selected_subscriptions),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
 
     }
 }
@@ -263,7 +315,10 @@ fun ArticleCard(
 ){
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ){
         article.imageUrl?.let {imageUrl ->
             AsyncImage(
@@ -295,7 +350,9 @@ fun ArticleCard(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             Text(
@@ -310,7 +367,9 @@ fun ArticleCard(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
            Button(
