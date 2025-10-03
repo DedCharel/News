@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -109,7 +109,7 @@ fun SubscriptionsScreen(
                     }
                 )
             }
-            if (state.articles.isNotEmpty()){
+            if (state.articles.isNotEmpty()) {
                 item {
                     HorizontalDivider()
                 }
@@ -122,16 +122,15 @@ fun SubscriptionsScreen(
                 item {
                     HorizontalDivider()
                 }
-
-               items(
-                   items = state.articles,
-                   key = {it.url}
-               ){
+                items(
+                    items = state.articles,
+                    key = { it.url }
+                ) {
                     ArticleCard(
                         article = it
                     )
-               }
-            } else if (state.subscriptions.isNotEmpty()){
+                }
+            } else if (state.subscriptions.isNotEmpty()) {
                 item {
                     HorizontalDivider()
                 }
@@ -224,7 +223,7 @@ fun SubscriptionChip(
                 contentDescription = stringResource(R.string.remove_subscription)
             )
         },
-        label = {Text(topic)}
+        label = { Text(topic) }
     )
 }
 
@@ -239,7 +238,7 @@ fun Subscriptions(
     onTopicClick: (String) -> Unit,
     onDeleteSubscription: (String) -> Unit
 
-){
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -261,7 +260,7 @@ fun Subscriptions(
                 .fillMaxWidth(),
             enabled = isSubscribeButtonEnabled,
             onClick = {
-               onSubscribeButtonClick()
+                onSubscribeButtonClick()
             }
         ) {
             Icon(
@@ -276,7 +275,7 @@ fun Subscriptions(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        if(subscriptions.isNotEmpty()){
+        if (subscriptions.isNotEmpty()) {
             Text(
                 text = stringResource(R.string.subscriptions_lable, subscriptions.size),
                 fontWeight = FontWeight.Bold
@@ -286,7 +285,7 @@ fun Subscriptions(
             ) {
 
                 subscriptions.forEach { topic, isSelected ->
-                    item (key = topic) {
+                    item(key = topic) {
                         SubscriptionChip(
                             topic = topic,
                             isSelected = isSelected,
@@ -312,15 +311,15 @@ fun Subscriptions(
 fun ArticleCard(
     modifier: Modifier = Modifier,
     article: Article
-){
+) {
     Card(
         modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
-    ){
-        article.imageUrl?.let {imageUrl ->
+    ) {
+        article.imageUrl?.let { imageUrl ->
             AsyncImage(
                 model = imageUrl,
                 contentDescription = stringResource(R.string.image_for_article, article.title),
@@ -339,7 +338,7 @@ fun ArticleCard(
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
-        if (article.descriptions.isNotEmpty()){
+        if (article.descriptions.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = article.descriptions,
@@ -354,7 +353,7 @@ fun ArticleCard(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             Text(
                 text = article.sourceName,
                 color = MaterialTheme.colorScheme.primary
@@ -372,22 +371,22 @@ fun ArticleCard(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-           Button(
-               modifier = Modifier.weight(1f),
-               onClick = {}
-           ){
-            Icon(
-                imageVector = CustomIcons.OpenInNew,
-                contentDescription = stringResource(R.string.read_article)
-            )
-               Spacer(modifier = Modifier.width(8.dp))
-               Text(text = stringResource(R.string.read))
-           }
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = CustomIcons.OpenInNew,
+                    contentDescription = stringResource(R.string.read_article)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(R.string.read))
+            }
 
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {}
-            ){
+            ) {
                 Icon(
                     imageVector = Icons.Default.Share,
                     contentDescription = stringResource(R.string.share_article)
