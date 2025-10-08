@@ -1,6 +1,7 @@
 package ru.nvgsoft.news.di
 
 import android.content.Context
+import androidx.work.WorkManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,13 @@ interface DataModule {
     ): NewsRepository
 
     companion object {
+
+        @Singleton
+        @Provides
+        fun provideWorkManager(
+            @ApplicationContext conext: Context
+        ): WorkManager = WorkManager.getInstance(conext)
+
 
         @Singleton
         @Provides

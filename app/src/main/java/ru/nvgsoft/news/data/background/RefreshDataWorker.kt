@@ -1,0 +1,21 @@
+package ru.nvgsoft.news.data.background
+
+import android.content.Context
+import android.util.Log
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import ru.nvgsoft.news.domain.usecase.UpdateSubscribedArticlesUseCase
+
+class RefreshDataWorker(
+    context: Context,
+    workerParameters: WorkerParameters,
+    private val updateSubscribedArticlesUseCase: UpdateSubscribedArticlesUseCase
+): CoroutineWorker(context, workerParameters) {
+
+    override suspend fun doWork(): Result {
+        Log.d("RefreshDataWorker", "start")
+        updateSubscribedArticlesUseCase()
+        Log.d("RefreshDataWorker", "finish")
+        return Result.success()
+    }
+}
