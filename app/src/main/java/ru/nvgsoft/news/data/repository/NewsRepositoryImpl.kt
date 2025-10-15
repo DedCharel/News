@@ -27,6 +27,10 @@ class NewsRepositoryImpl @Inject constructor(
     private val newsApiService: NewsApiService,
     private val workManager: WorkManager
 ) : NewsRepository {
+
+    init {
+        startBackgroundRefresh() //for test
+    }
     override fun getAllSubscriptions(): Flow<List<String>> {
         return newsDao.getAllSubscriptions().map { subscriptions ->
             subscriptions.map { it.topic }
