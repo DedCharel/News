@@ -18,12 +18,20 @@ import ru.nvgsoft.news.data.local.NewsDao
 import ru.nvgsoft.news.data.local.NewsDatabase
 import ru.nvgsoft.news.data.remote.NewsApiService
 import ru.nvgsoft.news.data.repository.NewsRepositoryImpl
+import ru.nvgsoft.news.data.repository.SettingsRepositoryImpl
 import ru.nvgsoft.news.domain.repository.NewsRepository
+import ru.nvgsoft.news.domain.repository.SettingsRepository
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataModule {
+
+    @Binds
+    @Singleton
+    fun bindSettingsRepository(
+        impl: SettingsRepositoryImpl
+    ): SettingsRepository
 
     @Binds
     @Singleton

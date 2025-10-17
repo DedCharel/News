@@ -89,4 +89,7 @@ dependencies {
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)
+
+    //data store
+    implementation(libs.androidx.datastore.preferences)
 }
