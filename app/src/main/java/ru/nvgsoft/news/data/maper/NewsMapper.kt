@@ -4,6 +4,7 @@ package ru.nvgsoft.news.data.maper
 import ru.nvgsoft.news.data.local.ArticleDbModel
 import ru.nvgsoft.news.data.remote.NewsResponseDto
 import ru.nvgsoft.news.domain.entity.Article
+import ru.nvgsoft.news.domain.entity.Interval
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -20,6 +21,10 @@ fun NewsResponseDto.toDBModels(topic: String): List<ArticleDbModel> {
         )
     }
 
+}
+
+fun Int.toInterval(): Interval {
+   return Interval.entries.first(){it.minutes == this}
 }
 
 fun List<ArticleDbModel>.toEntities(): List<Article> {
