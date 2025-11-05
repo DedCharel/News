@@ -8,46 +8,30 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import jakarta.inject.Inject
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import ru.nvgsoft.news.data.background.RefreshDataWorker
 import ru.nvgsoft.news.data.local.ArticleDbModel
 import ru.nvgsoft.news.data.local.NewsDao
 import ru.nvgsoft.news.data.local.SubscriptionDbModel
 import ru.nvgsoft.news.data.maper.toDBModels
 import ru.nvgsoft.news.data.maper.toEntities
-import ru.nvgsoft.news.data.maper.toRefreshConfig
 import ru.nvgsoft.news.data.remote.NewsApiService
 import ru.nvgsoft.news.domain.entity.Article
 import ru.nvgsoft.news.domain.entity.RefreshConfig
 import ru.nvgsoft.news.domain.repository.NewsRepository
-import ru.nvgsoft.news.domain.repository.SettingsRepository
 import java.util.concurrent.TimeUnit
 
 class NewsRepositoryImpl @Inject constructor(
     private val newsDao: NewsDao,
     private val newsApiService: NewsApiService,
-    private val workManager: WorkManager,
-    private val settingsRepository: SettingsRepository //temp
+    private val workManager: WorkManager
 ) : NewsRepository {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
-    init {
-        settingsRepository.getSettings()
-            .map { it.toRefreshConfig() }
-            .distinctUntilChanged()
-            .onEach { startBackgroundRefresh(it) }
-            .launchIn(scope)
-    }
+
     override fun getAllSubscriptions(): Flow<List<String>> {
         return newsDao.getAllSubscriptions().map { subscriptions ->
             subscriptions.map { it.topic }
@@ -101,7 +85,7 @@ class NewsRepositoryImpl @Inject constructor(
         newsDao.deleteArticlesByTopics(topics)
     }
 
-    private fun startBackgroundRefresh(refreshConfig: RefreshConfig){
+    override fun startBackgroundRefresh(refreshConfig: RefreshConfig){
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(
                 if (refreshConfig.wifiOnly){
