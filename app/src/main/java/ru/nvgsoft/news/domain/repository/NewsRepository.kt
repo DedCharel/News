@@ -10,13 +10,13 @@ interface NewsRepository {
 
     suspend fun addSubscriptions(topic: String)
 
-    suspend fun updateArticlesForTopic(topic: String)
+    suspend fun updateArticlesForTopic(topic: String): Boolean
 
     suspend fun removeSubscription(topic: String)
 
     fun startBackgroundRefresh(refreshConfig: RefreshConfig)
 
-    suspend fun updateArticlesForAllSubscriptions()
+    suspend fun updateArticlesForAllSubscriptions(): List<String>
 
     fun getArticlesByTopics(topics: List<String>): Flow<List<Article>>
 
