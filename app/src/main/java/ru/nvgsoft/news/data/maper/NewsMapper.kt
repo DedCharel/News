@@ -5,6 +5,7 @@ import ru.nvgsoft.news.data.local.ArticleDbModel
 import ru.nvgsoft.news.data.remote.NewsResponseDto
 import ru.nvgsoft.news.domain.entity.Article
 import ru.nvgsoft.news.domain.entity.Interval
+import ru.nvgsoft.news.domain.entity.Language
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,6 +24,15 @@ fun NewsResponseDto.toDBModels(topic: String): List<ArticleDbModel> {
 
 }
 
+
+fun Language.toQueryParam(): String {
+    return  when (this){
+        Language.RUSSIAN -> "ru"
+        Language.ENGLISH -> "en"
+        Language.FRENCH ->  "fr"
+        Language.GERMAN ->  "de"
+    }
+}
 fun Int.toInterval(): Interval {
    return Interval.entries.first(){it.minutes == this}
 }

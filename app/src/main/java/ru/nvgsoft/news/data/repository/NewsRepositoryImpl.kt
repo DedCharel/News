@@ -19,8 +19,10 @@ import ru.nvgsoft.news.data.local.NewsDao
 import ru.nvgsoft.news.data.local.SubscriptionDbModel
 import ru.nvgsoft.news.data.maper.toDBModels
 import ru.nvgsoft.news.data.maper.toEntities
+import ru.nvgsoft.news.data.maper.toQueryParam
 import ru.nvgsoft.news.data.remote.NewsApiService
 import ru.nvgsoft.news.domain.entity.Article
+import ru.nvgsoft.news.domain.entity.Language
 import ru.nvgsoft.news.domain.entity.RefreshConfig
 import ru.nvgsoft.news.domain.repository.NewsRepository
 import java.util.concurrent.TimeUnit
@@ -42,15 +44,15 @@ class NewsRepositoryImpl @Inject constructor(
         newsDao.addSubscription(SubscriptionDbModel(topic))
     }
 
-    override suspend fun updateArticlesForTopic(topic: String): Boolean{
-       val articles = loadArticles(topic)
+    override suspend fun updateArticlesForTopic(topic: String, language: Language): Boolean{
+       val articles = loadArticles(topic, language)
        val ids = newsDao.addArticles(articles)
         return ids.any{it != -1L}
     }
 
-    private suspend fun loadArticles(topic: String): List<ArticleDbModel> {
+    private suspend fun loadArticles(topic: String, language: Language): List<ArticleDbModel> {
         return try {
-           newsApiService.loadArticles(topic).toDBModels(topic)
+           newsApiService.loadArticles(topic, language.toQueryParam()).toDBModels(topic)
         } catch (e: Exception) {
             if (e is CancellationException){
                 throw e
@@ -64,13 +66,13 @@ class NewsRepositoryImpl @Inject constructor(
         newsDao.deleteSubscription(SubscriptionDbModel(topic))
     }
 
-    override suspend fun updateArticlesForAllSubscriptions(): List<String> {
+    override suspend fun updateArticlesForAllSubscriptions(language: Language): List<String> {
         val updatedTopics = mutableListOf<String>()
         val subscriptions = newsDao.getAllSubscriptions().first()
         coroutineScope {
             subscriptions.forEach {
                 launch {
-                    val updated = updateArticlesForTopic(it.topic)
+                    val updated = updateArticlesForTopic(it.topic, language)
                     if (updated){
                         updatedTopics.add(it.topic)
                     }
