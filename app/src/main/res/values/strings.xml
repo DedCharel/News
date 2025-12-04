@@ -19,4 +19,13 @@
     <string name="new_articles">New articles</string>
     <string name="new_articles_notification">New articles</string>
     <string name="update_subscriptions">Update %1$d subscriptions: %2$s</string>
+    <string name="back">Back</string>
+    <string name="search_language">Search Language</string>
+    <string name="select_language_for_news_search">Select language for news search</string>
+    <string name="russian">Русский</string>
+    <string name="english">English</string>
+    <string name="french">Francais</string>
+    <string name="german">Deutsch</string>
+    <string name="update_interval">Update interval</string>
+    <string name="how_often_to_update_news">How often to update news</string>
 </resources>
