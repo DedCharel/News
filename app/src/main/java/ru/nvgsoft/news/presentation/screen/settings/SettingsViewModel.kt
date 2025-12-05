@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.nvgsoft.news.domain.entity.Interval
 import ru.nvgsoft.news.domain.entity.Language
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val getSettingsUseCase: GetSettingsUseCase,
+    getSettingsUseCase: GetSettingsUseCase,
     private val updateIntervalUseCase: UpdateIntervalUseCase,
     private val updateNotificationEnabledUseCase: UpdateNotificationEnabledUseCase,
     private val updateWifiOnlyUseCase: UpdateWifiOnlyUseCase,
@@ -32,12 +33,15 @@ class SettingsViewModel @Inject constructor(
     init {
         getSettingsUseCase()
             .onEach { settings ->
-                SettingsState.Configuration(
-                    language = settings.language,
-                    interval = settings.interval,
-                    wifiOnly = settings.wifiOnly,
-                    notificationEnabled = settings.notificationEnabled
-                )
+                _state.update {
+                    SettingsState.Configuration(
+                        language = settings.language,
+                        interval = settings.interval,
+                        wifiOnly = settings.wifiOnly,
+                        notificationEnabled = settings.notificationEnabled
+                    )
+                }
+
             }
             .launchIn(viewModelScope)
     }

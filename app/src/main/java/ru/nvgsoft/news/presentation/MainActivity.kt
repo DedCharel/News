@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.nvgsoft.news.domain.repository.NewsRepository
+import ru.nvgsoft.news.presentation.screen.settings.SettingsScreen
 import ru.nvgsoft.news.presentation.screen.subscription.SubscriptionsScreen
 import ru.nvgsoft.news.presentation.ui.theme.NewsTheme
 import javax.inject.Inject
@@ -27,12 +28,15 @@ class MainActivity : ComponentActivity() {
                     contract = ActivityResultContracts.RequestPermission(),
                     onResult = {}
                 )
-                SubscriptionsScreen(
-                    onNavigateToSettings = {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                        }
-                    }
+//                SubscriptionsScreen(
+//                    onNavigateToSettings = {
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+//                        }
+//                    }
+//                )
+                SettingsScreen(
+                    onBackClick = {}
                 )
             }
         }

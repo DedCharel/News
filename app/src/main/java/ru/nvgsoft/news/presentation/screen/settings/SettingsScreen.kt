@@ -2,6 +2,11 @@
 
 package ru.nvgsoft.news.presentation.screen.settings
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -20,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -43,6 +50,12 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ){
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {
+            viewModel.processCommand(SettingsCommand.SetNotificationsEnabled(it))
+        }
+    )
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -50,6 +63,11 @@ fun SettingsScreen(
                 title = {Text(stringResource(R.string.settings))},
                 navigationIcon = {
                     Icon(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable{
+                            onBackClick()
+                        },
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back)
                     )
@@ -62,9 +80,12 @@ fun SettingsScreen(
         when(val currentState = state.value){
             is SettingsState.Configuration -> {
                 LazyColumn(
-                    contentPadding = innerPadding
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item {
+                        Spacer(modifier.height(8.dp))
                         SettingsCard(
                             title = stringResource(R.string.search_language),
                             subtitle = stringResource(R.string.select_language_for_news_search)
@@ -100,9 +121,48 @@ fun SettingsScreen(
                         }
                     }
 
+                    item {
+                        SettingsCard(
+                            title = stringResource(R.string.notifications),
+                            subtitle = stringResource(R.string.show_notifications_about_articles)
+                        ) {
+                            Switch(
+                                checked = currentState.notificationEnabled,
+                                onCheckedChange = { enabled ->
+                                    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+
+                                    } else {
+                                        viewModel.processCommand(
+                                            SettingsCommand.SetNotificationsEnabled(enabled))
+                                    }
+
+                                }
+                            )
+                        }
+                    }
+
+                    item {
+                        SettingsCard(
+                            title = stringResource(R.string.update_only_via_wi_fi),
+                            subtitle = stringResource(R.string.save_mobile_data)
+                        ) {
+                            Switch(
+                                checked = currentState.wifiOnly,
+                                onCheckedChange = {
+                                    viewModel.processCommand(
+                                        SettingsCommand.SetWifiOnly(it))
+                                }
+                            )
+                        }
+
+                    }
+
                 }
             }
-            SettingsState.Initial -> {}
+            SettingsState.Initial -> {
+                Text("Initial")
+            }
         }
 
     }
@@ -117,7 +177,11 @@ private fun SettingsCard(
     content: @Composable () -> Unit
 ){
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
@@ -130,9 +194,10 @@ private fun SettingsCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = title,
+                text = subtitle,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            content()
         }
     }
 }
